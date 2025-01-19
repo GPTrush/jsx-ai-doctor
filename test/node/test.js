@@ -1,4 +1,4 @@
-const { lintJSXCode } = require("./index");
+const { lintJSXCode } = require("../../index");
 
 const jsxCode = `
   const MyComponent = () => {
