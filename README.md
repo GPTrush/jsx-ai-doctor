@@ -1,29 +1,6 @@
 # jsx-ai-doctor
 
-`jsx-ai-doctor` is a purpose-built library designed to simplify the process of analyzing JSX code, identifying syntax or linting issues, and presenting them in a developer-friendly format. With the rise of AI-generated code, syntax errors have become a common hurdle, especially for those building Bug Fixing Agents. This library provides a structured and neat way to feed error information to an LLM, enabling more accurate and efficient fixes.
-
-We at [GPTrush.io](https://gptrush.io) built this library to help developers and AI enthusiasts streamline the process of debugging and fixing AI-generated code.
-
----
-
-## Features
-
-- **Error Identification**: Quickly identifies issues in JSX code, including syntax and rule violations.
-- **LLM-Friendly Output**: Provides clear, human-readable error messages in a format optimized for feeding into language models.
-- **Auto-Fix Capability**: Prints corrected versions of code (if auto-fixable) directly in the console for quick reference.
-- **Standalone or Integrated Use**: Use it as a standalone NPM package or integrate it into your project for enhanced linting.
-
----
-
-## Why Use This Library?
-
-AI-generated code often contains syntax errors, making it challenging to debug and resolve issues manually. If you're building a Bug Fixing Agent, you need a reliable way to extract and present errors in a format that an LLM can process effectively. `jsx-ai-doctor` bridges this gap by:
-
-1. Identifying syntax issues with precision.
-2. Formatting errors in a clean, structured manner that can be directly passed to an LLM.
-3. Offering insights into how to correct errors and auto-fix code when possible.
-
----
+Built with ❤️ by Team [GPTrush.io](https://gptrush.io)
 
 ## Installation
 
@@ -43,12 +20,8 @@ yarn add @gptrush/jsx-ai-doctor
 
 ## Usage
 
-You can use `jsx-ai-doctor` programmatically or via the command line.
-
-### Programmatic Usage
-
 ```javascript
-const { analyzeJSX } = require('jsx-ai-doctor');
+const { lintJSXCode } = require('@gptrush/jsx-ai-doctor');
 
 const code = `
 function Example() {
@@ -61,8 +34,14 @@ function Example() {
 }
 `;
 
-const result = analyzeJSX(code);
-console.log(result);
+lintJSXCode(jsxCode).then(errors => {
+  if (errors.length > 0) {
+    console.log("Errors found:");
+    console.log(errors);
+  } else {
+    console.log("No errors found.");
+  }
+});
 ```
 
 ---
@@ -106,6 +85,24 @@ The output would look like:
 3. Outputs:
    - A list of issues with contextual messages formatted for LLMs.
    - The corrected version of the code (if auto-fixable).
+
+---
+
+## Features
+
+- **Error Identification**: Quickly identifies issues in JSX code, including syntax and rule violations.
+- **LLM-Friendly Output**: Provides clear, human-readable error messages in a format optimized for feeding into language models.
+- **Standalone or Integrated Use**: Use it as a standalone NPM package or integrate it into your project for enhanced linting.
+
+---
+
+## Why Use This Library?
+
+AI-generated code often contains syntax errors, making it challenging to debug and resolve issues manually. If you're building a Bug Fixing Agent, you need a reliable way to extract and present errors in a format that an LLM can process effectively. `jsx-ai-doctor` bridges this gap by:
+
+1. Identifying syntax issues with precision.
+2. Formatting errors in a clean, structured manner that can be directly passed to an LLM.
+3. Offering insights into how to correct errors and auto-fix code when possible.
 
 ---
 
