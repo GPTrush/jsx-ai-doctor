@@ -1,6 +1,6 @@
 {
   "name": "@gptrush/jsx-ai-doctor",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Lint AI-generated JSX code with LLM-friendly output for streamlined debugging.",
   "main": "index.js",
   "scripts": {
