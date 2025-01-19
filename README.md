@@ -20,9 +20,14 @@ yarn add @gptrush/jsx-ai-doctor
 
 ## Usage
 
-```javascript
-const { lintJSXCode } = require('@gptrush/jsx-ai-doctor');
+The library supports multiple environments:
+- Browser-side (React/Next.js apps)
+- Server-side (Node.js)
 
+```javascript
+const { analyzeJSX } = require('@gptrush/jsx-ai-doctor');
+
+// Works in both browser and Node.js environments
 const code = `
 function Example() {
   return (
@@ -34,7 +39,7 @@ function Example() {
 }
 `;
 
-lintJSXCode(jsxCode).then(errors => {
+analyzeJSX(code).then(errors => {
   if (errors.length > 0) {
     console.log("Errors found:");
     console.log(errors);
@@ -80,19 +85,25 @@ The output would look like:
 
 ## How It Works
 
-1. Takes JSX code as a string input.
-2. Uses ESLint to parse and analyze the code.
-3. Outputs:
-   - A list of issues with contextual messages formatted for LLMs.
-   - The corrected version of the code (if auto-fixable).
+1. Takes JSX code as a string input
+2. Automatically detects the environment (browser vs Node.js)
+3. In browser environments:
+   - Uses a lightweight JSX parser for basic syntax validation
+   - Provides simplified error messages
+4. In Node.js environments:
+   - Uses full ESLint capabilities
+   - Provides detailed error messages with line/column information
+5. Returns consistent error output format across environments
 
 ---
 
 ## Features
 
-- **Error Identification**: Quickly identifies issues in JSX code, including syntax and rule violations.
-- **LLM-Friendly Output**: Provides clear, human-readable error messages in a format optimized for feeding into language models.
-- **Standalone or Integrated Use**: Use it as a standalone NPM package or integrate it into your project for enhanced linting.
+- **Multi-Environment Support**: Works seamlessly in both browser (React/Next.js) and Node.js environments
+- **Adaptive Validation**: Uses appropriate validation strategy based on the runtime environment
+- **Error Identification**: Quickly identifies issues in JSX code, including syntax and rule violations
+- **LLM-Friendly Output**: Provides clear, human-readable error messages in a format optimized for feeding into language models
+- **Standalone or Integrated Use**: Use it as a standalone NPM package or integrate it into your project for enhanced linting
 
 ---
 
@@ -108,12 +119,15 @@ AI-generated code often contains syntax errors, making it challenging to debug a
 
 ## API Reference
 
-### `analyzeJSX(code: string): Array<string>`
+### `analyzeJSX(code: string): Promise<Array<string>>`
 
-- **Description**: Analyzes the given JSX code and returns an array of error messages.
+- **Description**: Analyzes the given JSX code and returns an array of error messages
 - **Parameters**: 
-  - `code` (string): The JSX code to analyze.
-- **Returns**: An array of strings, each describing an issue found in the code with its context.
+  - `code` (string): The JSX code to analyze
+- **Returns**: A Promise resolving to an array of strings, each describing an issue found in the code with its context
+- **Environment Behavior**:
+  - Browser: Provides basic syntax validation with simplified error messages
+  - Node.js: Provides full ESLint validation with detailed error location information
 
 Example:
 
@@ -145,7 +159,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ## Feedback
 
-We’d love to hear your thoughts! Feel free to open an issue or reach out to us on [GitHub](https://github.com/gptrush/jsx-ai-doctor).
+We'd love to hear your thoughts! Feel free to open an issue or reach out to us on [GitHub](https://github.com/gptrush/jsx-ai-doctor).
 
 ---
 
