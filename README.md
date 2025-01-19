@@ -15,42 +15,18 @@ or
 ```bash
 yarn add @gptrush/jsx-ai-doctor
 ```
-
-### Next.js Configuration
-
-If you're using Next.js, you'll need to add the following configuration to your `next.config.js` to handle Node.js-specific modules:
-
-```javascript
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Don't attempt to load these Node.js only modules on the client
-      config.resolve.fallback = {
-        fs: false,
-        module: false,
-        path: false,
-      }
-    }
-    return config
-  },
-}
-
-module.exports = nextConfig
-```
-
 ---
 
 ## Usage
 
-The library supports multiple environments:
-- Browser-side (React/Next.js apps)
-- Server-side (Node.js)
+The library currently supports client-side environments only:
+- React applications
+- Next.js applications (with 'use client' directive)
 
 ```javascript
 const { analyzeJSX } = require('@gptrush/jsx-ai-doctor');
 
-// Works in both browser and Node.js environments
+// Example usage in a client component
 const code = `
 function Example() {
   return (
@@ -109,24 +85,19 @@ The output would look like:
 ## How It Works
 
 1. Takes JSX code as a string input
-2. Automatically detects the environment (browser vs Node.js)
-3. In browser environments:
-   - Uses a lightweight JSX parser for basic syntax validation
-   - Provides simplified error messages
-4. In Node.js environments:
-   - Uses full ESLint capabilities
-   - Provides detailed error messages with line/column information
-5. Returns consistent error output format across environments
+2. Uses @babel/parser for lightweight JSX syntax validation
+3. Returns clear error messages with line/column information
+4. Optimized for client-side performance
 
 ---
 
 ## Features
 
-- **Multi-Environment Support**: Works seamlessly in both browser (React/Next.js) and Node.js environments
-- **Adaptive Validation**: Uses appropriate validation strategy based on the runtime environment
-- **Error Identification**: Quickly identifies issues in JSX code, including syntax and rule violations
-- **LLM-Friendly Output**: Provides clear, human-readable error messages in a format optimized for feeding into language models
-- **Standalone or Integrated Use**: Use it as a standalone NPM package or integrate it into your project for enhanced linting
+- **Lightweight**: Minimal dependencies for optimal bundle size
+- **Client-Side Focused**: Optimized for browser environments
+- **Error Identification**: Quickly identifies JSX syntax issues
+- **LLM-Friendly Output**: Provides clear, human-readable error messages
+- **Zero Configuration**: Works out of the box with React and Next.js
 
 ---
 
@@ -187,4 +158,25 @@ We'd love to hear your thoughts! Feel free to open an issue or reach out to us o
 ---
 
 Happy Coding! 🚀
+
+## Future Work
+
+1. **Node.js Support**: 
+   - Add comprehensive ESLint-based validation for Node.js environments
+   - Implement detailed rule configurations
+   - Support for custom ESLint plugins and rules
+
+2. **Enhanced Validation**:
+   - Add React-specific best practices validation
+   - Support for TypeScript validation
+   - Custom rule configurations
+
+3. **Performance Optimizations**:
+   - Caching mechanisms for repeated validations
+   - Incremental parsing for large files
+
+4. **Additional Features**:
+   - Auto-fix capabilities
+   - Integration with popular IDEs
+   - Custom rule creation
 

@@ -1,94 +1,32 @@
-// Import ESLint differently based on environment
-const getESLintImplementation = () => {
-  if (typeof window !== 'undefined') {
-    // Browser environment - use a simplified validation approach
-    return Promise.resolve({
-      lintText: async (code) => {
-        const errors = [];
-        
-        // Basic JSX validation
-        try {
-          // Dynamic import of parser to avoid webpack issues
-          const parser = await import('@babel/parser');
-          parser.parse(code, {
-            sourceType: 'module',
-            plugins: ['jsx']
-          });
-        } catch (error) {
-          errors.push({
-            messages: [{
-              severity: 2,
-              line: error.loc?.line || 1,
-              column: error.loc?.column || 0,
-              message: error.message
-            }]
-          });
-        }
-        
-        return errors;
-      }
-    });
-  } else {
-    // Node.js environment - use full ESLint
-    return import('eslint').then(eslintModule => eslintModule.ESLint);
-  }
-};
-
+// Simplified browser-only JSX validator
 async function analyzeJSXCode(jsxCode) {
   try {
-    const ESLint = await getESLintImplementation();
-    const codeLines = jsxCode.split("\n");
+    // Dynamic import of @babel/parser
+    const { parse } = await import('@babel/parser');
     
-    // Initialize ESLint based on environment
-    const eslint = typeof window !== 'undefined' 
-      ? ESLint  // Browser environment - use simplified linter
-      : new ESLint({  // Node.js environment - use full ESLint
-          fix: false,
-          overrideConfig: {
-            languageOptions: {
-              ecmaVersion: 2020,
-              sourceType: "module",
-              globals: {
-                window: 'readonly',
-                document: 'readonly',
-                navigator: 'readonly',
-                console: 'readonly'
-              },
-              parserOptions: {
-                ecmaFeatures: { jsx: true }
-              }
-            },
-            linterOptions: {
-              reportUnusedDisableDirectives: true,
-            },
-            rules: {},
-            settings: {
-              react: { version: 'detect' }
-            }
-          }
-        });
-
-    // Lint the code and format results consistently
-    const results = await eslint.lintText(jsxCode);
+    // Attempt to parse the code
+    parse(jsxCode, {
+      sourceType: 'module',
+      plugins: ['jsx'],
+      errorRecovery: true
+    });
     
-    return results
-      .flatMap(result => result.messages.filter(message => message.severity === 2))
-      .map(message => {
-        const line = codeLines[message.line - 1];
-        const errorLocation = typeof window !== 'undefined' 
-          ? ''  // Browser environment - simpler error message
-          : ` in line ${message.line}:${message.column}`;
-        return `${line}  <---- Error: ${message.message}${errorLocation}`;
-      });
-      
+    return []; // No errors found
   } catch (error) {
-    console.error('ESLint initialization error:', error);
-    return [`Error initializing ESLint: ${error.message}`];
+    // Get the problematic line if location is available
+    const lines = jsxCode.split('\n');
+    const line = error.loc ? lines[error.loc.line - 1] : jsxCode;
+    
+    // Format the error message
+    return [`${line}  <---- Error: ${error.message} in line ${error.loc?.line || 1}:${error.loc?.column || 0}`];
   }
 }
 
 // For backwards compatibility
 const lintJSXCode = analyzeJSXCode;
 
-module.exports = { analyzeJSX: analyzeJSXCode, lintJSXCode };
-
+// Export the functions
+module.exports = {
+  analyzeJSX: analyzeJSXCode,
+  lintJSXCode
+};
