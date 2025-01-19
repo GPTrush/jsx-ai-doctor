@@ -16,6 +16,29 @@ or
 yarn add @gptrush/jsx-ai-doctor
 ```
 
+### Next.js Configuration
+
+If you're using Next.js, you'll need to add the following configuration to your `next.config.js` to handle Node.js-specific modules:
+
+```javascript
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Don't attempt to load these Node.js only modules on the client
+      config.resolve.fallback = {
+        fs: false,
+        module: false,
+        path: false,
+      }
+    }
+    return config
+  },
+}
+
+module.exports = nextConfig
+```
+
 ---
 
 ## Usage

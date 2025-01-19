@@ -8,8 +8,8 @@ const getESLintImplementation = () => {
         
         // Basic JSX validation
         try {
-          // Check for basic syntax errors
-          const parser = require('@babel/parser');
+          // Dynamic import of parser to avoid webpack issues
+          const parser = await import('@babel/parser');
           parser.parse(code, {
             sourceType: 'module',
             plugins: ['jsx']
@@ -30,7 +30,7 @@ const getESLintImplementation = () => {
     });
   } else {
     // Node.js environment - use full ESLint
-    return Promise.resolve(require('eslint').ESLint);
+    return import('eslint').then(eslintModule => eslintModule.ESLint);
   }
 };
 
