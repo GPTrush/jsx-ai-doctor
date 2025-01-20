@@ -24,35 +24,30 @@ The library currently supports client-side environments only:
 - Next.js applications (with 'use client' directive)
 
 ```javascript
-const { analyzeJSX } = require('@gptrush/jsx-ai-doctor');
+import { analyzeJSX } from '@gptrush/jsx-ai-doctor';
 
 // Example usage in a client component
 const code = `
-function Example() {
+const MyComponent = () => {
   return (
     <div>
       <h1>Hello World</h1>
-      <p>This is a JSX example</p>
+      <p>This is a simple JSX example</p>
     </div>
   );
-}
-`;
+};`;
 
-analyzeJSX(code).then(errors => {
-  if (errors.length > 0) {
-    console.log("Errors found:");
-    console.log(errors);
-  } else {
-    console.log("No errors found.");
-  }
-});
+const analysis = await analyzeJSX(code);
+console.log(analysis);
+// Output: null (if no errors)
+// or "Error: [error description]" (if error found)
 ```
 
 ---
 
 ## Example Output
 
-For a given JSX code snippet:
+For a given JSX code snippet with syntax error:
 
 ```jsx
 const MyComponent = () => {
@@ -75,10 +70,25 @@ const MyComponent = () => {
 The output would look like:
 
 ```
-[
-  '      },]\n  <---- Error: Parsing error: Unexpected token ] in line 9:9'
-]
+13:         isDefault: true,
+14:       },]<---- Error: Unexpected token (14:9)
+15:     );
 ```
+
+### Understanding the Output Format
+
+The error output is designed to be human and LLM-friendly, showing:
+1. The line containing the error (N)
+2. One line before the error (N-1) for context
+3. One line after the error (N+1) for context
+4. An arrow pointing to the exact position of the error
+5. A clear error message with line and column numbers
+
+This format makes it easy to:
+- Quickly locate the error in the code
+- Understand the context around the error
+- Identify the exact character position where the error occurs
+- Get a clear description of what went wrong
 
 ---
 
@@ -86,7 +96,7 @@ The output would look like:
 
 1. Takes JSX code as a string input
 2. Uses @babel/parser for lightweight JSX syntax validation
-3. Returns clear error messages with line/column information
+3. Returns clear error message with line/column information
 4. Optimized for client-side performance
 
 ---
@@ -113,12 +123,12 @@ AI-generated code often contains syntax errors, making it challenging to debug a
 
 ## API Reference
 
-### `analyzeJSX(code: string): Promise<Array<string>>`
+### `analyzeJSX(code: string): Promise<string | null>`
 
-- **Description**: Analyzes the given JSX code and returns an array of error messages
+- **Description**: Analyzes the given JSX code and returns an error message if found
 - **Parameters**: 
   - `code` (string): The JSX code to analyze
-- **Returns**: A Promise resolving to an array of strings, each describing an issue found in the code with its context
+- **Returns**: A Promise resolving to a string describing the error found in the code, or null if no errors
 - **Environment Behavior**:
   - Browser: Provides basic syntax validation with simplified error messages
   - Node.js: Provides full ESLint validation with detailed error location information
@@ -126,11 +136,9 @@ AI-generated code often contains syntax errors, making it challenging to debug a
 Example:
 
 ```javascript
-const errors = analyzeJSX('<div><h1>Hello World</h1>');
-console.log(errors);
-// Output: [
-//   "<div><h1>Hello World</h1> <---- Error: Missing closing tag for <div> in line 1:1"
-// ]
+const error = await analyzeJSX('<div><h1>Hello World</h1>');
+console.log(error);
+// Output: "Error: Missing closing tag for <div> in line 1:1"
 ```
 
 ---

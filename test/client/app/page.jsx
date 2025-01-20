@@ -42,6 +42,17 @@ const MyComponent = () => {
     );
   };
 `
+    }, 
+    {
+      name: "Invalid Hook",
+      code: `
+      const [arr, setArr] = useState(
+    {
+      id: 1,
+      name: 'Company 1',
+    }
+  ]);
+      `
     }
   ];
 
@@ -51,16 +62,16 @@ const MyComponent = () => {
     
     for (const test of testCases) {
       try {
-        const errors = await analyzeJSX(test.code);
+        const error = await analyzeJSX(test.code);
         results.push({
           name: test.name,
-          errors,
-          success: errors.length === 0
+          error,
+          success: !error // success if error is empty/null/undefined
         });
       } catch (error) {
         results.push({
           name: test.name,
-          errors: [error.message],
+          error: error.message,
           success: false
         });
       }
@@ -108,9 +119,7 @@ const MyComponent = () => {
                 padding: '10px', 
                 borderRadius: '5px' 
               }}>
-                {result.errors.length > 0 
-                  ? result.errors.join('\n') 
-                  : 'No errors found'}
+                {result.error || 'No errors found'}
               </pre>
             </div>
           ))}
