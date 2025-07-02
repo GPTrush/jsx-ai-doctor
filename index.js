@@ -7,7 +7,7 @@ async function analyzeJSXCode(jsxCode) {
     // Attempt to parse the code
     parse(jsxCode, {
       sourceType: 'module',
-      plugins: ['jsx'],
+      plugins: ['jsx', 'typescript'],
       errorRecovery: true
     });
     
